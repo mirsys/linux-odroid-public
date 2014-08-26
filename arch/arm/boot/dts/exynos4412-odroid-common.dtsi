@@ -17,6 +17,24 @@
 		stdout-path = &serial_1;
 	};
 
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		mfc_left: region@77000000 {
+			compatible = "shared-dma-pool";
+			reusable;
+			reg = <0x77000000 0x1000000>;
+		};
+
+		mfc_right: region@78000000 {
+			compatible = "shared-dma-pool";
+			reusable;
+			reg = <0x78000000 0x1000000>;
+		};
+	};
+
 	firmware@0204F000 {
 		compatible = "samsung,secure-firmware";
 		reg = <0x0204F000 0x1000>;
@@ -456,6 +474,11 @@
 		 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
 		 <&clock_audss EXYNOS_SCLK_I2S>;
 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+};
+
+&mfc {
+	memory-region = <&mfc_left>, <&mfc_right>;
+	memory-region-names = "left", "right";
 };
 
 &mixer {
