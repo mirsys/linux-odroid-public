@@ -86,6 +86,10 @@
 	};
 };
 
+&mshc_0 {
+	vmmc-supply = <&buck8_reg>;
+};
+
 &pinctrl_1 {
 	gpio_home_key: home_key {
 		samsung,pins = "gpx2-2";

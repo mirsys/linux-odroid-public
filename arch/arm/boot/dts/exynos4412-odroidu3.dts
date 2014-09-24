@@ -111,6 +111,10 @@
 	};
 };
 
+&mshc_0 {
+	vmmc-supply = <&ldo22_reg>;
+};
+
 &sound {
 	simple-audio-card,name = "Odroid-U3";
 	simple-audio-card,widgets =
