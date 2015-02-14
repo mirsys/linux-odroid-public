@@ -476,6 +476,18 @@
 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
 };
 
+&memory_bus_mif {
+	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+	vdd-mem-supply = <&buck1_reg>;
+	status = "okay";
+};
+
+&memory_bus_int {
+	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+	vdd-mem-supply = <&buck3_reg>;
+	status = "okay";
+};
+
 &mfc {
 	memory-region = <&mfc_left>, <&mfc_right>;
 	memory-region-names = "left", "right";
