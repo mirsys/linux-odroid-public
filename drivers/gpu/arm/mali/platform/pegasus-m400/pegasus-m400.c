@@ -14,7 +14,9 @@
  */
 #include <linux/version.h>
 #include "mali_kernel_common.h"
+#include "mali_kernel_linux.h"
 #include "mali_osk.h"
+#include "mali_osk_mali.h"
 #include "mali_platform.h"
 
 #include <linux/clk.h>
@@ -22,6 +24,9 @@
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>
 #include <linux/regulator/driver.h>
+#include <linux/mali/mali_utgard.h>
+#include <linux/dma-contiguous.h>
+#include <linux/cma.h>
 
 #include <asm/io.h>
 
@@ -148,7 +153,15 @@ err_regulator:
 
 _mali_osk_errcode_t mali_platform_init(void)
 {
+	struct cma *default_area = dma_contiguous_default_area;
+
 	MALI_CHECK(mali_platform_init_clk() == 0, _MALI_OSK_ERR_FAULT);
+
+	if (default_area && mali_platform_data) {
+		mali_platform_data->fb_start = cma_get_base(default_area);
+		mali_platform_data->fb_size = cma_get_size(default_area);
+	}
+
 	MALI_SUCCESS;
 }
 
