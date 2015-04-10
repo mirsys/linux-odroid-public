@@ -1314,3 +1314,7 @@
 	vtmu-supply = <&ldo10_reg>;
 	status = "okay";
 };
+
+&cpu0 {
+	cpu0-supply = <&buck2_reg>;
+};
