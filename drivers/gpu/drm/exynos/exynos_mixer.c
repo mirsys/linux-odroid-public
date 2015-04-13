@@ -42,6 +42,7 @@
 #include "exynos_mixer.h"
 
 #define MIXER_WIN_NR		3
+#define MIXER_VP_WIN		2
 
 /* The pixelformats that are natively supported by the mixer. */
 #define MXR_FORMAT_RGB565	4
@@ -154,6 +155,15 @@ static const u8 filter_cr_horiz_tap4[] = {
 	-6,	-5,	-4,	-3,	-2,	-1,	-1,	0,
 	127,	126,	124,	118,	111,	102,	92,	81,
 	70,	59,	48,	37,	27,	19,	11,	5,
+};
+
+static const uint32_t mixer_formats[] = {
+	DRM_FORMAT_XRGB8888,
+	DRM_FORMAT_ARGB8888,
+};
+
+static const uint32_t vp_formats[] = {
+	DRM_FORMAT_NV12,
 };
 
 static inline bool is_alpha_format(const struct mixer_context* ctx, unsigned int win)
@@ -1333,6 +1343,14 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
 
 	for (i = 0; i < MIXER_WIN_NR; i++) {
 		plane_config.zpos = i;
+
+		if (i == MIXER_VP_WIN && ctx->vp_enabled) {
+			plane_config.pixel_formats = vp_formats;
+			plane_config.num_pixel_formats = ARRAY_SIZE(vp_formats);
+		} else {
+			plane_config.pixel_formats = mixer_formats;
+			plane_config.num_pixel_formats = ARRAY_SIZE(mixer_formats);
+		}
 
 		ret = exynos_plane_init(drm_dev, &ctx->planes[i], &plane_config);
 		if (ret)

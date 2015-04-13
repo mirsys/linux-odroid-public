@@ -26,6 +26,11 @@
 #define WINDOWS_NR	3
 #define MIN_FB_WIDTH_FOR_16WORD_BURST	128
 
+static const uint32_t decon_5433_formats[] = {
+	DRM_FORMAT_XRGB8888,
+	DRM_FORMAT_ARGB8888,
+};
+
 struct decon_context {
 	struct device			*dev;
 	struct drm_device		*drm_dev;
@@ -473,6 +478,8 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
 	ctx->pipe = priv->pipe++;
 
 	plane_config.possible_crtcs = 1 << ctx->pipe;
+	plane_config.pixel_formats = decon_5433_formats;
+	plane_config.num_pixel_formats = ARRAY_SIZE(decon_5433_formats);
 
 	for (i = 0; i < WINDOWS_NR; i++) {
 		plane_config.zpos = i;
