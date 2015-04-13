@@ -432,14 +432,18 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
 	struct drm_device *drm_dev = data;
 	struct drm_encoder *encoder = &ctx->encoder;
 	struct exynos_drm_plane *exynos_plane;
-	unsigned int zpos;
+	struct exynos_drm_plane_config plane_config = { 0 };
+	unsigned int i;
 	int pipe, ret;
 
 	vidi_ctx_initialize(ctx, drm_dev);
 
-	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
-		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
-					1 << ctx->pipe, zpos);
+	plane_config.possible_crtcs = 1 << ctx->pipe;
+
+	for (i = 0; i < WINDOWS_NR; i++) {
+		plane_config.zpos = i;
+
+		ret = exynos_plane_init(drm_dev, &ctx->planes[i], &plane_config);
 		if (ret)
 			return ret;
 	}
