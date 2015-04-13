@@ -160,6 +160,11 @@ static const u8 filter_cr_horiz_tap4[] = {
 static const uint32_t mixer_formats[] = {
 	DRM_FORMAT_XRGB8888,
 	DRM_FORMAT_ARGB8888,
+	DRM_FORMAT_RGB565,
+	DRM_FORMAT_XRGB1555,
+	DRM_FORMAT_ARGB1555,
+	DRM_FORMAT_XRGB4444,
+	DRM_FORMAT_ARGB4444,
 };
 
 static const uint32_t vp_formats[] = {
