@@ -169,6 +169,7 @@ static const uint32_t mixer_formats[] = {
 
 static const uint32_t vp_formats[] = {
 	DRM_FORMAT_NV12,
+	DRM_FORMAT_NV21,
 };
 
 static inline bool is_alpha_format(const struct mixer_context* ctx, unsigned int win)
@@ -193,6 +194,7 @@ static inline bool is_vp_format(const struct exynos_drm_plane *plane)
 
 	switch (fb->pixel_format) {
 	case DRM_FORMAT_NV12:
+	case DRM_FORMAT_NV21:
 		return true;
 	default:
 		return false;
