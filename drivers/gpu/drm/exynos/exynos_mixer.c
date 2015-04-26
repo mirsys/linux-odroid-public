@@ -709,10 +709,12 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
 
 	switch (fb->pixel_format) {
 	case DRM_FORMAT_XRGB4444:
+	case DRM_FORMAT_ARGB4444:
 		fmt = MXR_FORMAT_ARGB4444;
 		break;
 
 	case DRM_FORMAT_XRGB1555:
+	case DRM_FORMAT_ARGB1555:
 		fmt = MXR_FORMAT_ARGB1555;
 		break;
 
