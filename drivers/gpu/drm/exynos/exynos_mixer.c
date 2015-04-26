@@ -86,6 +86,7 @@ struct mixer_context {
 	struct exynos_drm_plane	planes[MIXER_WIN_NR];
 	const struct layer_config *layer_config;
 	unsigned int num_layer;
+	u32			layer_state;
 	int			pipe;
 	unsigned long		flags;
 	bool			interlace;
@@ -168,6 +169,27 @@ static inline bool is_alpha_format(const struct mixer_context* ctx, unsigned int
 	default:
 		return false;
 	}
+}
+
+static inline u32 get_layer_state(const struct mixer_context *ctx,
+	unsigned int win, bool enable)
+{
+	u32 enable_state, alpha_state;
+
+	enable_state = ctx->layer_state & 0xffff;
+	alpha_state = ctx->layer_state >> 16;
+
+	if (enable)
+		enable_state |= (1 << win);
+	else
+		enable_state &= ~(1 << win);
+
+	if (enable && is_alpha_format(ctx, win))
+		alpha_state |= (1 << win);
+	else
+		alpha_state &= ~(1 << win);
+
+	return ((alpha_state << 16) | enable_state);
 }
 
 static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
@@ -351,8 +373,9 @@ static void mixer_general_layer(struct mixer_context *ctx,
 {
 	u32 val;
 	struct mixer_resources *res = &ctx->mixer_res;
+	const u32 alpha_state = ctx->layer_state >> 16;
 
-	if (is_alpha_format(ctx, cfg->index)) {
+	if (alpha_state & (1 << cfg->index)) {
 		val = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
 		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
 		val |= MXR_GRP_CFG_PIXEL_BLEND_EN; /* blending based on pixel alpha */
@@ -378,10 +401,11 @@ static void mixer_general_layer(struct mixer_context *ctx,
 	}
 }
 
-static void mixer_layer_blending(struct mixer_context *ctx, unsigned int enable_state)
+static void mixer_layer_blending(struct mixer_context *ctx)
 {
 	unsigned int i, index;
 	bool bottom_layer = false;
+	const u32 enable_state = ctx->layer_state & 0xffff;
 
 	for (i = 0; i < ctx->num_layer; ++i) {
 		index = ctx->layer_config[i].index;
@@ -484,7 +508,18 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
 				bool enable)
 {
 	struct mixer_resources *res = &ctx->mixer_res;
+	u32 new_layer_state;
 	u32 val = enable ? ~0 : 0;
+
+	new_layer_state = get_layer_state(ctx, win, enable);
+	if (new_layer_state == ctx->layer_state)
+		return;
+
+	/*
+	 * Update the layer state so that mixer_layer_blending()
+	 * below can use it.
+	 */
+	ctx->layer_state = new_layer_state;
 
 	switch (win) {
 	case 0:
@@ -501,6 +536,8 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
 		}
 		break;
 	}
+
+	mixer_layer_blending(ctx);
 }
 
 static void mixer_run(struct mixer_context *ctx)
