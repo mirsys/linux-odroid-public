@@ -498,11 +498,6 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
 			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
 			mixer_reg_writemask(res, MXR_CFG, val,
 				MXR_CFG_VP_ENABLE);
-
-			/* control blending of graphic layer 0 */
-			mixer_reg_writemask(res, MXR_GRAPHIC_CFG(0), val,
-					MXR_GRP_CFG_BLEND_PRE_MUL |
-					MXR_GRP_CFG_PIXEL_BLEND_EN);
 		}
 		break;
 	}
@@ -791,7 +786,6 @@ static void mixer_win_reset(struct mixer_context *ctx)
 {
 	struct mixer_resources *res = &ctx->mixer_res;
 	unsigned long flags;
-	u32 val; /* value stored to register */
 
 	spin_lock_irqsave(&res->reg_slock, flags);
 	mixer_vsync_set_update(ctx, false);
@@ -811,23 +805,6 @@ static void mixer_win_reset(struct mixer_context *ctx)
 	mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
 	mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
 	mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
-
-	/* setting graphical layers */
-	val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
-	val |= MXR_GRP_CFG_WIN_BLEND_EN;
-	val |= MXR_GRP_CFG_ALPHA_VAL(0xff); /* non-transparent alpha */
-
-	/* Don't blend layer 0 onto the mixer background */
-	mixer_reg_write(res, MXR_GRAPHIC_CFG(0), val);
-
-	/* Blend layer 1 into layer 0 */
-	val |= MXR_GRP_CFG_BLEND_PRE_MUL;
-	val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
-	mixer_reg_write(res, MXR_GRAPHIC_CFG(1), val);
-
-	/* setting video layers */
-	val = MXR_GRP_CFG_ALPHA_VAL(0);
-	mixer_reg_write(res, MXR_VIDEO_CFG, val);
 
 	if (ctx->vp_enabled) {
 		/* configuration of Video Processor Registers */
