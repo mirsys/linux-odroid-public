@@ -155,6 +155,21 @@ static const u8 filter_cr_horiz_tap4[] = {
 	70,	59,	48,	37,	27,	19,	11,	5,
 };
 
+static inline bool is_alpha_format(const struct mixer_context* ctx, unsigned int win)
+{
+	const struct drm_plane_state *state = ctx->planes[win].base.state;
+	const struct drm_framebuffer *fb = state->fb;
+
+	switch (fb->pixel_format) {
+	case DRM_FORMAT_ARGB8888:
+	case DRM_FORMAT_ARGB1555:
+	case DRM_FORMAT_ARGB4444:
+		return true;
+	default:
+		return false;
+	}
+}
+
 static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
 {
 	return readl(res->vp_regs + reg_id);
@@ -310,6 +325,79 @@ static void mixer_layer_priority(struct mixer_context *ctx)
 	}
 
 	mixer_reg_write(&ctx->mixer_res, MXR_LAYER_CFG, val);
+}
+
+/* Configure blending for bottom-most layer. */
+static void mixer_bottom_layer(struct mixer_context *ctx,
+		const struct layer_config *cfg)
+{
+	u32 val;
+	struct mixer_resources *res = &ctx->mixer_res;
+
+	if (cfg->index == 2) {
+		val = 0; /* use defaults for video layer */
+		mixer_reg_write(res, MXR_VIDEO_CFG, val);
+	} else {
+		val = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
+
+		/* Don't blend bottom-most layer onto the mixer background. */
+		mixer_reg_writemask(res, MXR_GRAPHIC_CFG(cfg->index),
+				val, MXR_GRP_CFG_MISC_MASK);
+	}
+}
+
+static void mixer_general_layer(struct mixer_context *ctx,
+		const struct layer_config *cfg)
+{
+	u32 val;
+	struct mixer_resources *res = &ctx->mixer_res;
+
+	if (is_alpha_format(ctx, cfg->index)) {
+		val = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
+		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
+		val |= MXR_GRP_CFG_PIXEL_BLEND_EN; /* blending based on pixel alpha */
+
+		/* The video layer never has an alpha pixelformat. */
+		mixer_reg_writemask(res, MXR_GRAPHIC_CFG(cfg->index),
+				val, MXR_GRP_CFG_MISC_MASK);
+	} else {
+		if (cfg->index == 2) {
+			/*
+			 * No blending at the moment since the NV12/NV21 pixelformats don't
+			 * have an alpha channel. However the mixer supports a global alpha
+			 * value for a layer. Once this functionality is exposed, we can
+			 * support blending of the video layer through this.
+			 */
+			val = 0;
+			mixer_reg_write(res, MXR_VIDEO_CFG, val);
+		} else {
+			val = MXR_GRP_CFG_COLOR_KEY_DISABLE;
+			mixer_reg_writemask(res, MXR_GRAPHIC_CFG(cfg->index),
+					val, MXR_GRP_CFG_MISC_MASK);
+		}
+	}
+}
+
+static void mixer_layer_blending(struct mixer_context *ctx, unsigned int enable_state)
+{
+	unsigned int i, index;
+	bool bottom_layer = false;
+
+	for (i = 0; i < ctx->num_layer; ++i) {
+		index = ctx->layer_config[i].index;
+
+		/* Skip layer if it's not enabled. */
+		if (!(enable_state & (1 << index)))
+			continue;
+
+		/* Bottom layer needs special handling. */
+		if (bottom_layer) {
+			mixer_general_layer(ctx, &ctx->layer_config[i]);
+		} else {
+			mixer_bottom_layer(ctx, &ctx->layer_config[i]);
+			bottom_layer = true;
+		}
+	}
 }
 
 static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
