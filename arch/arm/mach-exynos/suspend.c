@@ -32,7 +32,8 @@
 #include <asm/suspend.h>
 
 #include <plat/pm-common.h>
-#include <plat/regs-srom.h>
+
+#include <mach/map.h>
 
 #include "common.h"
 #include "regs-pmu.h"
@@ -52,15 +53,6 @@
 struct exynos_wkup_irq {
 	unsigned int hwirq;
 	u32 mask;
-};
-
-static struct sleep_save exynos_core_save[] = {
-	/* SROM side */
-	SAVE_ITEM(S5P_SROM_BW),
-	SAVE_ITEM(S5P_SROM_BC0),
-	SAVE_ITEM(S5P_SROM_BC1),
-	SAVE_ITEM(S5P_SROM_BC2),
-	SAVE_ITEM(S5P_SROM_BC3),
 };
 
 struct exynos_pm_data {
@@ -341,8 +333,6 @@ static void exynos_pm_prepare(void)
 	/* Set wake-up mask registers */
 	exynos_pm_set_wakeup_mask();
 
-	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-
 	exynos_pm_enter_sleep_mode();
 
 	/* ensure at least INFORM0 has the resume address */
@@ -372,8 +362,6 @@ static void exynos5420_pm_prepare(void)
 
 	/* Set wake-up mask registers */
 	exynos_pm_set_wakeup_mask();
-
-	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
 
 	exynos_pmu_spare3 = pmu_raw_readl(S5P_PMU_SPARE3);
 	/*
@@ -465,8 +453,6 @@ static void exynos_pm_resume(void)
 	/* For release retention */
 	exynos_pm_release_retention();
 
-	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-
 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
 		scu_enable(S5P_VA_SCU);
 
@@ -532,8 +518,6 @@ static void exynos5420_pm_resume(void)
 	exynos_pm_release_retention();
 
 	pmu_raw_writel(exynos_pmu_spare3, S5P_PMU_SPARE3);
-
-	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
 
 early_wakeup:
 
