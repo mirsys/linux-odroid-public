@@ -215,7 +215,7 @@ int exynos_plane_init(struct drm_device *dev,
 	enum drm_plane_type type;
 	int err;
 
-	switch (config->zpos) {
+	switch (config->index) {
 	case DEFAULT_WIN:
 		type = DRM_PLANE_TYPE_PRIMARY;
 		break;

@@ -482,6 +482,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
 	plane_config.num_pixel_formats = ARRAY_SIZE(decon_5433_formats);
 
 	for (i = 0; i < WINDOWS_NR; i++) {
+		plane_config.index = i;
 		plane_config.zpos = i;
 
 		ret = exynos_plane_init(drm_dev, &ctx->planes[i], &plane_config);
