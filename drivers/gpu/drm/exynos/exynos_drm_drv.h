@@ -89,6 +89,7 @@ struct exynos_drm_plane {
  *
  * @possible_crtcs: bitfield describing the valid CRTCs
  *			for this plane.
+ * @index: hardware layer index
  * @zpos: z-position of the plane.
  * @pixel_formats: supported pixel formats.
  * @num_pixel_formats: number of elements in 'pixel_formats'.
@@ -96,6 +97,7 @@ struct exynos_drm_plane {
 
 struct exynos_drm_plane_config {
 	unsigned long possible_crtcs;
+	unsigned int index;
 	unsigned int zpos;
 	const uint32_t *pixel_formats;
 	unsigned int num_pixel_formats;
