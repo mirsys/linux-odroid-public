@@ -1,3 +1,4 @@
 [PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12 platform
 [PATCH v7 00/15] HDMI CEC framework
 [PATCH 0/5] Add support for Exynos SROM Controller driver
+[PATCH v6 0/6] hwmon: thermal: Odroid U3: Provide support for Odroid U3 fan
