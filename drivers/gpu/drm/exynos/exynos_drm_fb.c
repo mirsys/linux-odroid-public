@@ -258,6 +258,7 @@ struct exynos_drm_gem_buf *exynos_drm_fb_buffer(struct drm_framebuffer *fb,
 
 static void exynos_drm_output_poll_changed(struct drm_device *dev)
 {
+#ifdef CONFIG_DRM_EXYNOS_FBDEV
 	struct exynos_drm_private *private = dev->dev_private;
 	struct drm_fb_helper *fb_helper = private->fb_helper;
 
@@ -265,6 +266,7 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
 		drm_fb_helper_hotplug_event(fb_helper);
 	else
 		exynos_drm_fbdev_init(dev);
+#endif
 }
 
 static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {

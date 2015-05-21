@@ -15,9 +15,13 @@
 #ifndef _EXYNOS_DRM_FBDEV_H_
 #define _EXYNOS_DRM_FBDEV_H_
 
+#ifdef CONFIG_DRM_EXYNOS_FBDEV
 int exynos_drm_fbdev_init(struct drm_device *dev);
-int exynos_drm_fbdev_reinit(struct drm_device *dev);
 void exynos_drm_fbdev_fini(struct drm_device *dev);
 void exynos_drm_fbdev_restore_mode(struct drm_device *dev);
+#else
+static inline void exynos_drm_fbdev_fini(struct drm_device *dev) {}
+static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev) {}
+#endif
 
 #endif

@@ -2,10 +2,6 @@ config DRM_EXYNOS
 	tristate "DRM Support for Samsung SoC EXYNOS Series"
 	depends on OF && DRM && (PLAT_SAMSUNG || ARCH_MULTIPLATFORM)
 	select DRM_KMS_HELPER
-	select DRM_KMS_FB_HELPER
-	select FB_CFB_FILLRECT
-	select FB_CFB_COPYAREA
-	select FB_CFB_IMAGEBLIT
 	select VIDEOMODE_HELPERS
 	help
 	  Choose this option if you have a Samsung SoC EXYNOS chipset.
@@ -15,6 +11,19 @@ config DRM_EXYNOS_IOMMU
 	bool
 	depends on DRM_EXYNOS && EXYNOS_IOMMU && ARM_DMA_USE_IOMMU
 	default y
+
+config DRM_EXYNOS_FBDEV
+	bool "Enable legacy fbdev support for Exynos modesetting driver"
+	depends on DRM_EXYNOS
+	select DRM_KMS_FB_HELPER
+	select FB_CFB_FILLRECT
+	select FB_CFB_COPYAREA
+	select FB_CFB_IMAGEBLIT
+	default y
+	help
+	  Choose this option if you have a need for the legacy fbdev support.
+	  Note that this support also provide the linux console support on
+	  top of the Exynos modesetting driver.
 
 config DRM_EXYNOS_FIMD
 	bool "Exynos DRM FIMD"
