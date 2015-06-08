@@ -334,10 +334,6 @@ struct mali_gpu_utilization_data {
 	unsigned int utilization_gpu; /* Utilization for GP and all PP cores combined, 0 = no utilization, 256 = full utilization */
 	unsigned int utilization_gp;  /* Utilization for GP core only, 0 = no utilization, 256 = full utilization */
 	unsigned int utilization_pp;  /* Utilization for all PP cores combined, 0 = no utilization, 256 = full utilization */
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	unsigned int number_of_window_jobs;
-	unsigned int number_of_window_jobs_under_pressure;
-#endif
 };
 
 struct mali_resource
@@ -415,9 +411,6 @@ struct mali_gpu_device_data {
 	 *  GP  PP0 PP1  PP2  PP3  PP4  PP5  PP6  PP7, L2$0 L2$1 L2$2
 	 */
 	u16 pmu_domain_config[12];
-
-	/* Fuction that platform callback for freq tunning, needed when POWER_PERFORMANCE_POLICY enabled*/
-	int (*set_freq_callback)(unsigned int mhz);
 
 	struct mali_resource resource[MALI_RESOURCE_INDEX_LAST];
 };

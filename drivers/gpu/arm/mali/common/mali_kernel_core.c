@@ -1249,19 +1249,6 @@ _mali_osk_errcode_t _mali_ukk_open(void **context)
 		MALI_ERROR(_MALI_OSK_ERR_NOMEM);
 	}
 
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	if ( _MALI_OSK_ERR_OK != _mali_osk_atomic_init(&session->number_of_window_jobs, 0)) {
-		MALI_DEBUG_PRINT_ERROR(("Initialization of atomic number_of_window_jobs failed.\n"));
-		mali_timeline_system_destroy(session->timeline_system);
-		mali_soft_job_system_destroy(session->soft_job_system);
-		mali_memory_session_end(session);
-		mali_mmu_pagedir_free(session->page_directory);
-		_mali_osk_notification_queue_term(session->ioctl_queue);
-		_mali_osk_free(session);
-		return _MALI_OSK_ERR_FAULT;
-	}
-#endif
-
 	session->use_high_priority_job_queue = MALI_FALSE;
 
 	/* Initialize list of PP jobs on this session. */
@@ -1347,10 +1334,6 @@ _mali_osk_errcode_t _mali_ukk_close(void **context)
 
 	/* Free remaining memory allocated to this session */
 	mali_memory_session_end(session);
-
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	_mali_osk_atomic_term(&session->number_of_window_jobs);
-#endif
 
 	/* Free session data structures */
 	mali_mmu_pagedir_free(session->page_directory);

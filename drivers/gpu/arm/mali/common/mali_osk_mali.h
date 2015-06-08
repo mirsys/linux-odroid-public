@@ -63,9 +63,6 @@ struct _mali_osk_device_data {
 	 */
 	u16 pmu_domain_config[12];
 
-	/* Fuction that platform callback for freq tunning, needed when MALI400_POWER_PERFORMANCE_POLICY enabled */
-	int (*set_freq_callback)(unsigned int mhz);
-
 	struct mali_resource resource[MALI_RESOURCE_INDEX_LAST];
 };
 

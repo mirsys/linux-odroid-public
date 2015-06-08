@@ -92,18 +92,6 @@ extern int mali_max_pp_cores_group_2;
 module_param(mali_max_pp_cores_group_2, int, S_IRUSR | S_IRGRP | S_IROTH);
 MODULE_PARM_DESC(mali_max_pp_cores_group_2, "Limit the number of PP cores to use from second PP group (Mali-450 only).");
 
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-/** the max fps the same as display vsync default 60, can set by module insert parameter */
-extern int mali_max_system_fps;
-module_param(mali_max_system_fps, int, S_IRUSR | S_IWUSR | S_IWGRP | S_IRGRP | S_IROTH);
-MODULE_PARM_DESC(mali_max_system_fps, "Max system fps the same as display VSYNC.");
-
-/** a lower limit on their desired FPS default 58, can set by module insert parameter*/
-extern int mali_desired_fps;
-module_param(mali_desired_fps, int, S_IRUSR | S_IWUSR | S_IWGRP | S_IRGRP | S_IROTH);
-MODULE_PARM_DESC(mali_desired_fps, "A bit lower than max_system_fps which user desired fps");
-#endif
-
 #if MALI_ENABLE_CPU_CYCLES
 #include <linux/cpumask.h>
 #include <linux/timer.h>

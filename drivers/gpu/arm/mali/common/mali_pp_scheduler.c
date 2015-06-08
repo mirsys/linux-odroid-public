@@ -607,12 +607,6 @@ static void mali_pp_scheduler_finalize_job(struct mali_pp_job * job)
 	mali_pp_scheduler_return_job_to_user(job, MALI_FALSE);
 #endif
 
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	if (_MALI_PP_JOB_FLAG_IS_WINDOW_SURFACE & job->uargs.flags) {
-		_mali_osk_atomic_inc(&job->session->number_of_window_jobs);
-	}
-#endif
-
 	mali_pp_scheduler_job_completed();
 }
 

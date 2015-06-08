@@ -42,44 +42,6 @@ static u32 last_utilization_pp = 0 ;
 
 static u32 mali_utilization_timeout = 1000;
 void (*mali_utilization_callback)(struct mali_gpu_utilization_data *data) = NULL;
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-extern void mali_power_performance_policy_callback(struct mali_gpu_utilization_data *data);
-#define NUMBER_OF_NANOSECONDS_PER_SECOND  1000000000ULL
-
-static u32 calculate_window_render_fps(u64 time_period)
-{
-	u32 max_window_number;
-	u64 tmp;
-	u64 max = time_period;
-	u32 leading_zeroes;
-	u32 shift_val;
-	u32 time_period_shift;
-	u32 max_window_number_shift;
-	u32 ret_val;
-
-	max_window_number = mali_session_max_window_num();
-	/* To avoid float division, extend the dividend to ns unit */
-	tmp = (u64)max_window_number * NUMBER_OF_NANOSECONDS_PER_SECOND;
-	if (tmp > time_period) {
-		max = tmp;
-	}
-
-	/*
-	 * We may have 64-bit values, a dividend or a divisor or both
-	 * To avoid dependencies to a 64-bit divider, we shift down the two values
-	 * equally first.
-	 */
-	leading_zeroes = _mali_osk_clz((u32)(max >> 32));
-	shift_val = 32 - leading_zeroes;
-
-	time_period_shift = (u32)(time_period >> shift_val);
-	max_window_number_shift = (u32)(tmp >> shift_val);
-
-	ret_val = max_window_number_shift / time_period_shift;
-
-	return ret_val;
-}
-#endif  /* defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY) */
 
 static void calculate_gpu_utilization(void* arg)
 {
@@ -94,9 +56,6 @@ static void calculate_gpu_utilization(void* arg)
 	u32 utilization_gpu;
 	u32 utilization_gp;
 	u32 utilization_pp;
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	u32 window_render_fps;
-#endif
 
 	_mali_osk_spinlock_irq_lock(time_data_lock);
 
@@ -184,10 +143,6 @@ static void calculate_gpu_utilization(void* arg)
 	utilization_gp = work_normalized_gp / period_normalized;
 	utilization_pp = work_normalized_pp / period_normalized;
 
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	window_render_fps = calculate_window_render_fps(time_period);
-#endif
-
 	last_utilization_gpu = utilization_gpu;
 	last_utilization_gp = utilization_gp;
 	last_utilization_pp = utilization_pp;
@@ -211,10 +166,7 @@ static void calculate_gpu_utilization(void* arg)
 
 	if (NULL != mali_utilization_callback) {
 		struct mali_gpu_utilization_data data = {
-			utilization_gpu, utilization_gp, utilization_pp,
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-			window_render_fps, window_render_fps
-#endif
+			utilization_gpu, utilization_gp, utilization_pp
 		};
 		mali_utilization_callback(&data);
 	}
@@ -234,13 +186,6 @@ _mali_osk_errcode_t mali_utilization_init(void)
 			MALI_DEBUG_PRINT(2, ("Mali GPU Utilization: Platform has it's own policy \n"));
 			MALI_DEBUG_PRINT(2, ("Mali GPU Utilization: Utilization handler installed with interval %u\n", mali_utilization_timeout));
 		}
-	}
-#endif
-
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	if (mali_utilization_callback == NULL) {
-		MALI_DEBUG_PRINT(2, ("Mali GPU Utilization: MALI Power Performance Policy Algorithm \n"));
-		mali_utilization_callback = mali_power_performance_policy_callback;
 	}
 #endif
 
@@ -318,9 +263,6 @@ void mali_utilization_gp_start(void)
 			period_start_time = time_now;
 
 			/* Clear session->number_of_window_jobs */
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-			mali_session_max_window_num();
-#endif
 			_mali_osk_spinlock_irq_unlock(time_data_lock);
 
 			_mali_osk_timer_add(utilization_timer, _mali_osk_time_mstoticks(mali_utilization_timeout));
@@ -358,9 +300,6 @@ void mali_utilization_pp_start(void)
 			period_start_time = time_now;
 
 			/* Clear session->number_of_window_jobs */
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-			mali_session_max_window_num();
-#endif
 			_mali_osk_spinlock_irq_unlock(time_data_lock);
 
 			_mali_osk_timer_add(utilization_timer, _mali_osk_time_mstoticks(mali_utilization_timeout));

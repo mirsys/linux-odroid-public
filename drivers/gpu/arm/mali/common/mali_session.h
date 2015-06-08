@@ -35,10 +35,6 @@ struct mali_session_data {
 	_MALI_OSK_LIST_HEAD(link); /**< Link for list of all sessions */
 	_MALI_OSK_LIST_HEAD(pp_job_list); /**< List of all PP jobs on this session */
 
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-	_mali_osk_atomic_t number_of_window_jobs; /**< Record the window jobs completed on this session in a period */
-#endif
-
 	_mali_osk_list_t pp_job_fb_lookup_list[MALI_PP_JOB_FB_LOOKUP_LIST_SIZE]; /**< List of PP job lists per frame builder id.  Used to link jobs from same frame builder. */
 
 	struct mali_soft_job_system *soft_job_system; /**< Soft job system for this session. */
@@ -82,13 +78,5 @@ MALI_STATIC_INLINE void mali_session_send_notification(struct mali_session_data 
 {
 	_mali_osk_notification_queue_send(session->ioctl_queue, object);
 }
-
-/*
- * Get the max completed window jobs from all active session,
- * which will be used in  window render frame per sec calculate
- */
-#if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
-u32 mali_session_max_window_num(void);
-#endif
 
 #endif /* __MALI_SESSION_H__ */

@@ -122,7 +122,6 @@ _mali_osk_errcode_t _mali_osk_device_data_get(struct _mali_osk_device_data *data
 			data->utilization_interval = os_data->utilization_interval;
 			data->utilization_callback = os_data->utilization_callback;
 			data->pmu_switch_delay = os_data->pmu_switch_delay;
-			data->set_freq_callback = os_data->set_freq_callback;
 
 			memcpy(data->pmu_domain_config, os_data->pmu_domain_config, sizeof(os_data->pmu_domain_config));
 			return _MALI_OSK_ERR_OK;
