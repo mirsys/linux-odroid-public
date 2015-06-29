@@ -31,6 +31,7 @@
 #include <linux/workqueue.h>
 #include <linux/mutex.h>
 
+#include <media/cec.h>
 #include <media/v4l2-common.h>
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-device.h>
@@ -221,6 +222,7 @@ struct cobalt_stream {
 	struct list_head bufs;
 	struct i2c_adapter *i2c_adap;
 	struct v4l2_subdev *sd;
+	struct cec_adapter cec_adap;
 	struct mutex lock;
 	spinlock_t irqlock;
 	struct v4l2_dv_timings timings;
