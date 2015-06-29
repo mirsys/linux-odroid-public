@@ -187,6 +187,10 @@
 	status = "okay";
 };
 
+&hdmicec {
+	status = "okay";
+};
+
 &hsotg {
 	dr_mode = "peripheral";
 	status = "okay";
