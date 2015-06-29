@@ -1,0 +1,87 @@
+<refentry id="cec-ioc-g-adap-state">
+  <refmeta>
+    <refentrytitle>ioctl CEC_G_ADAP_STATE, CEC_S_ADAP_STATE</refentrytitle>
+    &manvol;
+  </refmeta>
+
+  <refnamediv>
+    <refname>CEC_G_ADAP_STATE</refname>
+    <refname>CEC_S_ADAP_STATE</refname>
+    <refpurpose>Get or set the adapter state</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int <function>ioctl</function></funcdef>
+	<paramdef>int <parameter>fd</parameter></paramdef>
+	<paramdef>int <parameter>request</parameter></paramdef>
+	<paramdef>__u32 *<parameter>argp</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Arguments</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><parameter>fd</parameter></term>
+	<listitem>
+	  <para>File descriptor returned by
+	  <link linkend='cec-func-open'><function>open()</function></link>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>request</parameter></term>
+	<listitem>
+	  <para>CEC_G_ADAP_STATE, CEC_S_ADAP_STATE</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>argp</parameter></term>
+	<listitem>
+	  <para></para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Description</title>
+
+    <para>To query the current adapter state applications call the
+<constant>CEC_G_ADAP_STATE</constant> ioctl with a pointer to an __u32
+where the driver stores the state.</para>
+
+    <para>To set the adapter state applications store the CEC adapter state
+in an __u32 and call the <constant>CEC_S_ADAP_STATE</constant> ioctl with a
+pointer to this integer. <constant>CEC_S_ADAP_STATE</constant> is only
+available if <constant>CEC_CAP_STATE</constant> is set.</para>
+
+    <para>Available states are:</para>
+
+    <table pgwide="1" frame="none" id="cec-adap-states">
+      <title>Adapter States</title>
+      <tgroup cols="3">
+	&cs-def;
+	<tbody valign="top">
+	  <row>
+	    <entry><constant>CEC_STATE_DISABLED</constant></entry>
+	    <entry>0</entry>
+	    <entry>The adapter is disabled.</entry>
+	  </row>
+	  <row>
+	    <entry><constant>CEC_STATE_ENABLED</constant></entry>
+	    <entry>1</entry>
+	    <entry>The adapter is enabled.</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+  </refsect1>
+
+  <refsect1>
+    &return-value;
+  </refsect1>
+</refentry>

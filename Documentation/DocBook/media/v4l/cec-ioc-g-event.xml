@@ -1,0 +1,125 @@
+<refentry id="cec-ioc-g-event">
+  <refmeta>
+    <refentrytitle>ioctl CEC_G_EVENT</refentrytitle>
+    &manvol;
+  </refmeta>
+
+  <refnamediv>
+    <refname>CEC_G_EVENT</refname>
+    <refpurpose>Get a CEC event</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int <function>ioctl</function></funcdef>
+	<paramdef>int <parameter>fd</parameter></paramdef>
+	<paramdef>int <parameter>request</parameter></paramdef>
+	<paramdef>struct cec_event *<parameter>argp</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Arguments</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><parameter>fd</parameter></term>
+	<listitem>
+	  <para>File descriptor returned by
+	  <link linkend='cec-func-open'><function>open()</function></link>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>request</parameter></term>
+	<listitem>
+	  <para>CEC_G_EVENT</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>argp</parameter></term>
+	<listitem>
+	  <para></para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Description</title>
+
+    <para>CEC devices can send asynchronous events. These can be retrieved by calling
+    the <constant>CEC_G_EVENT</constant> ioctl. If the file descriptor is in non-blocking
+    mode and no event is pending, then it will return -1 and set errno to the &EAGAIN;.</para>
+
+    <para>There can be up to 40 events queued up. If more events are added, then the oldest event will be discarded.</para>
+
+    <table pgwide="1" frame="none" id="cec-event">
+      <title>struct <structname>cec_event</structname></title>
+      <tgroup cols="3">
+	&cs-str;
+	<tbody valign="top">
+	  <row>
+	    <entry>__u64</entry>
+	    <entry><structfield>ts</structfield></entry>
+	    <entry>Timestamp of the event in ns.</entry>
+	  </row>
+	  <row>
+	    <entry>__u32</entry>
+	    <entry><structfield>event</structfield></entry>
+	    <entry>The event, see <xref linkend="cec-events" />.</entry>
+	  </row>
+	  <row>
+	    <entry>__u32</entry>
+	    <entry><structfield>sequence</structfield></entry>
+	    <entry>For the <constant>CEC_EVENT_GOT_REPLY</constant> event this
+	    holds the sequence number of message that requested the reply.
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>__u8</entry>
+	    <entry><structfield>reserved</structfield>[8]</entry>
+	    <entry>Reserved for future extensions. Drivers must
+	    set this array to zero.</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+
+    <table pgwide="1" frame="none" id="cec-events">
+      <title>CEC Events</title>
+      <tgroup cols="3">
+	&cs-def;
+	<tbody valign="top">
+	  <row>
+	    <entry><constant>CEC_EVENT_CONNECT</constant></entry>
+	    <entry>1</entry>
+	    <entry>Generated when the HDMI cable is connected.</entry>
+	  </row>
+	  <row>
+	    <entry><constant>CEC_EVENT_READY</constant></entry>
+	    <entry>2</entry>
+	    <entry>Generated when all logical addresses are claimed.</entry>
+	  </row>
+	  <row>
+	    <entry><constant>CEC_EVENT_DISCONNECT</constant></entry>
+	    <entry>3</entry>
+	    <entry>Generated when the HDMI cable is disconnected.</entry>
+	  </row>
+	  <row>
+	    <entry><constant>CEC_EVENT_GOT_REPLY</constant></entry>
+	    <entry>4</entry>
+	    <entry>Generated when a reply is received for a previously sent
+	    message. Generated only if a reply was requested and only if the
+	    message was sent in non-blocking mode.</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+  </refsect1>
+
+  <refsect1>
+    &return-value;
+  </refsect1>
+</refentry>

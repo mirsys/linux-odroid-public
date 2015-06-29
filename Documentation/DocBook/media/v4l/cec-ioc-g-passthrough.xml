@@ -1,0 +1,88 @@
+<refentry id="cec-ioc-g-passthrough">
+  <refmeta>
+    <refentrytitle>ioctl CEC_G_PASSTHROUGH, CEC_S_PASSTHROUGH</refentrytitle>
+    &manvol;
+  </refmeta>
+
+  <refnamediv>
+    <refname>CEC_G_PASSTHROUGH</refname>
+    <refname>CEC_S_PASSTHROUGH</refname>
+    <refpurpose>Get or set the passthrough mode</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int <function>ioctl</function></funcdef>
+	<paramdef>int <parameter>fd</parameter></paramdef>
+	<paramdef>int <parameter>request</parameter></paramdef>
+	<paramdef>__u32 *<parameter>argp</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Arguments</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><parameter>fd</parameter></term>
+	<listitem>
+	  <para>File descriptor returned by
+	  <link linkend='cec-func-open'><function>open()</function></link>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>request</parameter></term>
+	<listitem>
+	  <para>CEC_G_PASSTHROUGH, CEC_S_PASSTHROUGH</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>argp</parameter></term>
+	<listitem>
+	  <para></para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Description</title>
+
+    <para>To query the current state of the passhrough mode the applications
+    call the <constant>CEC_G_PASSTHROUGH</constant> ioctl with a pointer to an
+    __u32 where the driver stores the state.</para>
+
+    <para>To set the state of the passthrough mode applications store the
+    passthrough mode state in an __u32 and call the <constant>CEC_S_PASSTHROUGH
+    </constant> ioctl with a pointer to this integer.
+    <constant>CEC_S_PASSTHROUGH</constant> is only available if
+    <constant>CEC_CAP_PASSTHROUGH</constant> is set.</para>
+
+    <para>Available states are:</para>
+
+    <table pgwide="1" frame="none" id="cec-adap-passthrough-states">
+      <title>Adapter Passthrough States</title>
+      <tgroup cols="3">
+	&cs-def;
+	<tbody valign="top">
+	  <row>
+	    <entry><constant>CEC_PASSTHROUGH_DISABLED</constant></entry>
+	    <entry>0</entry>
+	    <entry>The passthrough mode is disabled.</entry>
+	  </row>
+	  <row>
+	    <entry><constant>CEC_PASSTHROUGH_ENABLED</constant></entry>
+	    <entry>1</entry>
+	    <entry>The passthrough is enabled.</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+  </refsect1>
+
+  <refsect1>
+    &return-value;
+  </refsect1>
+</refentry>

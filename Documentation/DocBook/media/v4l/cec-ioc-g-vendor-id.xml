@@ -1,0 +1,70 @@
+<refentry id="cec-ioc-g-vendor-id">
+  <refmeta>
+    <refentrytitle>ioctl CEC_G_VENDOR_ID, CEC_S_VENDOR_ID</refentrytitle>
+    &manvol;
+  </refmeta>
+
+  <refnamediv>
+    <refname>CEC_G_VENDOR_ID</refname>
+    <refname>CEC_S_VENDOR_ID</refname>
+    <refpurpose>Get or set vendor ID</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int <function>ioctl</function></funcdef>
+	<paramdef>int <parameter>fd</parameter></paramdef>
+	<paramdef>int <parameter>request</parameter></paramdef>
+	<paramdef>__u32 *<parameter>argp</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Arguments</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><parameter>fd</parameter></term>
+	<listitem>
+	  <para>File descriptor returned by
+	  <link linkend='cec-func-open'><function>open()</function></link>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>request</parameter></term>
+	<listitem>
+	  <para>CEC_G_VENDOR_ID, CEC_S_VENDOR_ID</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><parameter>argp</parameter></term>
+	<listitem>
+	  <para></para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Description</title>
+
+    <para>To query the current CEC vendor ID applications call the
+<constant>CEC_G_VENDOR_ID</constant> ioctl with a pointer to an __u32
+where the driver stores the vendor ID.</para>
+
+    <para>To set a new vendor ID applications store the vendor ID in
+an __u32 and call the <constant>CEC_S_VENDOR_ID</constant> ioctl with a
+pointer to this integer. <constant>CEC_S_VENDOR_ID</constant> is only
+available if <constant>CEC_CAP_VENDOR_ID</constant> is set.</para>
+
+    <para>The vendor ID is a 24-bit number that identifies the specific
+vendor or entity. Based on this ID vendor specific commands may be
+defined.</para>
+  </refsect1>
+
+  <refsect1>
+    &return-value;
+  </refsect1>
+</refentry>
