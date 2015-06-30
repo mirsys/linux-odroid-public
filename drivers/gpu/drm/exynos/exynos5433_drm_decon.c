@@ -33,7 +33,6 @@ struct decon_context {
 	struct exynos_drm_plane		planes[WINDOWS_NR];
 	void __iomem			*addr;
 	struct clk			*clks[6];
-	unsigned int			default_win;
 	unsigned long			irq_flags;
 	int				pipe;
 	bool				suspended;
@@ -466,7 +465,6 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
 	struct drm_device *drm_dev = data;
 	struct exynos_drm_private *priv = drm_dev->dev_private;
 	struct exynos_drm_plane *exynos_plane;
-	enum drm_plane_type type;
 	unsigned int zpos;
 	int ret;
 
@@ -474,15 +472,13 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
 	ctx->pipe = priv->pipe++;
 
 	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
-		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
-							DRM_PLANE_TYPE_OVERLAY;
 		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
-				1 << ctx->pipe, type, zpos);
+				1 << ctx->pipe, zpos);
 		if (ret)
 			return ret;
 	}
 
-	exynos_plane = &ctx->planes[ctx->default_win];
+	exynos_plane = &ctx->planes[DEFAULT_WIN];
 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
 					ctx->pipe, EXYNOS_DISPLAY_TYPE_LCD,
 					&decon_crtc_ops, ctx);
@@ -571,7 +567,6 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
 	if (!ctx)
 		return -ENOMEM;
 
-	ctx->default_win = 0;
 	ctx->suspended = true;
 	ctx->dev = dev;
 	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))

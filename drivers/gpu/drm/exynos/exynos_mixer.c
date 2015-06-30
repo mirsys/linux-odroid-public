@@ -42,7 +42,6 @@
 #include "exynos_mixer.h"
 
 #define MIXER_WIN_NR		3
-#define MIXER_DEFAULT_WIN	0
 
 /* The pixelformats that are natively supported by the mixer. */
 #define MXR_FORMAT_RGB565	4
@@ -586,7 +585,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
 
 	/* setup display size */
 	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
-		win == MIXER_DEFAULT_WIN) {
+		win == DEFAULT_WIN) {
 		val  = MXR_MXR_RES_HEIGHT(mode->vdisplay);
 		val |= MXR_MXR_RES_WIDTH(mode->hdisplay);
 		mixer_reg_write(res, MXR_RESOLUTION, val);
@@ -1163,7 +1162,6 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
 	struct mixer_context *ctx = dev_get_drvdata(dev);
 	struct drm_device *drm_dev = data;
 	struct exynos_drm_plane *exynos_plane;
-	enum drm_plane_type type;
 	unsigned int zpos;
 	int ret;
 
@@ -1172,15 +1170,13 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
 		return ret;
 
 	for (zpos = 0; zpos < MIXER_WIN_NR; zpos++) {
-		type = (zpos == MIXER_DEFAULT_WIN) ? DRM_PLANE_TYPE_PRIMARY :
-						DRM_PLANE_TYPE_OVERLAY;
 		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
-					1 << ctx->pipe, type, zpos);
+					1 << ctx->pipe, zpos);
 		if (ret)
 			return ret;
 	}
 
-	exynos_plane = &ctx->planes[MIXER_DEFAULT_WIN];
+	exynos_plane = &ctx->planes[DEFAULT_WIN];
 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
 					   ctx->pipe, EXYNOS_DISPLAY_TYPE_HDMI,
 					   &mixer_crtc_ops, ctx);

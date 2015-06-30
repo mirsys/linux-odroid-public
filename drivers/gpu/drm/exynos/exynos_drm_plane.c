@@ -214,10 +214,22 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
 
 int exynos_plane_init(struct drm_device *dev,
 		      struct exynos_drm_plane *exynos_plane,
-		      unsigned long possible_crtcs, enum drm_plane_type type,
-		      unsigned int zpos)
+		      unsigned long possible_crtcs, unsigned int zpos)
 {
+	enum drm_plane_type type;
 	int err;
+
+	switch (zpos) {
+	case DEFAULT_WIN:
+		type = DRM_PLANE_TYPE_PRIMARY;
+		break;
+	case CURSOR_WIN:
+		type = DRM_PLANE_TYPE_CURSOR;
+		break;
+	default:
+		type = DRM_PLANE_TYPE_OVERLAY;
+		break;
+	};
 
 	err = drm_universal_plane_init(dev, &exynos_plane->base, possible_crtcs,
 				       &exynos_plane_funcs, formats,
