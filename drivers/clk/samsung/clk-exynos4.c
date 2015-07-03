@@ -1551,12 +1551,12 @@ static void __init exynos4_clk_init(struct device_node *np,
 		if (of_machine_is_compatible("samsung,exynos4412")) {
 			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
 				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
+				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
 				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
 		} else {
 			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
 				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
+				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
 				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
 		}
 	}
