@@ -4,3 +4,4 @@
 [PATCH v6 0/6] hwmon: thermal: Odroid U3: Provide support for Odroid U3 fan
 [PATCH 0/10 v6] Helper to abstract vma handling in media layer
 [PATCH v4 0/9] devfreq: Add generic exynos memory-bus frequency driver
+[PATCH 00/23] drm/exynos: atomic improvements + exynos_encoder removal
