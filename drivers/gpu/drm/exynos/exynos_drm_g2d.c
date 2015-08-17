@@ -980,8 +980,6 @@ static int g2d_check_reg_offset(struct device *dev,
 				goto err;
 
 			reg_type = g2d_get_reg_type(reg_offset);
-			if (unlikely(reg_type == REG_TYPE_NONE))
-				goto err;
 
 			/* check userptr buffer type. */
 			if ((cmdlist->data[index] & ~0x7fffffff) >> 31) {
@@ -996,8 +994,6 @@ static int g2d_check_reg_offset(struct device *dev,
 				goto err;
 
 			reg_type = g2d_get_reg_type(reg_offset);
-			if (unlikely(reg_type == REG_TYPE_NONE))
-				goto err;
 
 			buf_desc = &buf_info->descs[reg_type];
 			value = cmdlist->data[index + 1];
@@ -1010,8 +1006,6 @@ static int g2d_check_reg_offset(struct device *dev,
 				goto err;
 
 			reg_type = g2d_get_reg_type(reg_offset);
-			if (unlikely(reg_type == REG_TYPE_NONE))
-				goto err;
 
 			buf_desc = &buf_info->descs[reg_type];
 			value = cmdlist->data[index + 1];
@@ -1025,8 +1019,6 @@ static int g2d_check_reg_offset(struct device *dev,
 				goto err;
 
 			reg_type = g2d_get_reg_type(reg_offset);
-			if (unlikely(reg_type == REG_TYPE_NONE))
-				goto err;
 
 			buf_desc = &buf_info->descs[reg_type];
 			value = cmdlist->data[index + 1];
