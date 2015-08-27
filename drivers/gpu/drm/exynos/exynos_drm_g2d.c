@@ -260,6 +260,38 @@ struct g2d_data {
 	unsigned long			max_pool;
 };
 
+static void g2d_set_max_burst_length(struct g2d_data *g2d, unsigned len)
+{
+	u32 axi_mode;
+	u32 burst;
+
+	switch (len) {
+	case 2:
+		burst = G2D_MAX_BURST_LEN_2;
+		break;
+	case 4:
+		burst = G2D_MAX_BURST_LEN_4;
+		break;
+	case 8:
+		burst = G2D_MAX_BURST_LEN_8;
+		break;
+	case 16:
+		burst = G2D_MAX_BURST_LEN_16;
+		break;
+	default:
+		BUG_ON(1);
+	}
+
+	axi_mode = readl_relaxed(g2d->regs + G2D_AXI_MODE);
+
+	if ((axi_mode & G2D_MAX_BURST_LEN_MASK) == burst)
+		return;
+
+	axi_mode &= ~G2D_MAX_BURST_LEN_MASK;
+	axi_mode |= burst;
+	writel_relaxed(axi_mode, g2d->regs + G2D_AXI_MODE);
+}
+
 static int g2d_init_cmdlist(struct g2d_data *g2d)
 {
 	struct device *dev = g2d->dev;
