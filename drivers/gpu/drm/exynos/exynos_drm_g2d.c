@@ -910,6 +910,9 @@ static void g2d_dma_start(struct g2d_data *g2d,
 	if (unlikely(ret < 0))
 		return;
 
+	/* This should enable cache-coherent read/write operations. */
+	g2d_set_axi_mode(g2d, 0x2, 0x2, 0x1, 0x1);
+
 	writel_relaxed(node->dma_addr, g2d->regs + G2D_DMA_SFR_BASE_ADDR);
 	writel_relaxed(G2D_DMA_START, g2d->regs + G2D_DMA_COMMAND);
 }
