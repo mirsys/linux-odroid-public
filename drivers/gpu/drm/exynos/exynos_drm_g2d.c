@@ -30,7 +30,7 @@
 #define G2D_HW_MAJOR_VER		4
 #define G2D_HW_MINOR_VER		1
 
-/* vaild register range set from user: 0x0104 ~ 0x0880 */
+/* valid register range set for user: 0x0104 ~ 0x0880 */
 #define G2D_VALID_START			0x0104
 #define G2D_VALID_END			0x0880
 
@@ -38,6 +38,7 @@
 #define G2D_SOFT_RESET			0x0000
 #define G2D_INTEN			0x0004
 #define G2D_INTC_PEND			0x000C
+#define G2D_AXI_MODE			0x001C
 #define G2D_DMA_SFR_BASE_ADDR		0x0080
 #define G2D_DMA_COMMAND			0x0084
 #define G2D_DMA_STATUS			0x008C
@@ -77,6 +78,18 @@
 #define G2D_INTP_UCMD_FIN		(1 << 2)
 #define G2D_INTP_GCMD_FIN		(1 << 1)
 #define G2D_INTP_SCMD_FIN		(1 << 0)
+
+/* G2D_AXI_MODE */
+#define G2D_MAX_BURST_LEN_2		(0 << 24)
+#define G2D_MAX_BURST_LEN_4		(1 << 24)
+#define G2D_MAX_BURST_LEN_8		(2 << 24)
+#define G2D_MAX_BURST_LEN_16		(3 << 24)
+#define G2D_MAX_BURST_LEN_MASK		(3 << 24)
+#define G2D_MAX_BURST_LEN_SHIFT		24
+#define G2D_AXI_AWUSERS_SHIFT		16
+#define G2D_AXI_ARUSERS_SHIFT		8
+#define G2D_AXI_AWCACHE_SHIFT		4
+#define G2D_AXI_ARCACHE_SHIFT		0
 
 /* G2D_DMA_COMMAND */
 #define G2D_DMA_HALT			(1 << 2)
