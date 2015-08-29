@@ -459,6 +459,8 @@ static const struct drm_ioctl_desc exynos_ioctls[] = {
 			exynos_g2d_set_cmdlist_ioctl, DRM_UNLOCKED | DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(EXYNOS_G2D_EXEC,
 			exynos_g2d_exec_ioctl, DRM_UNLOCKED | DRM_AUTH),
+	DRM_IOCTL_DEF_DRV(EXYNOS_G2D_USERPTR,
+			exynos_g2d_userptr_ioctl, DRM_UNLOCKED | DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_GET_PROPERTY,
 			exynos_drm_ipp_get_property, DRM_UNLOCKED | DRM_AUTH),
 	DRM_IOCTL_DEF_DRV(EXYNOS_IPP_SET_PROPERTY,

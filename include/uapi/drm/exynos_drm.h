@@ -97,9 +97,22 @@ enum drm_exynos_g2d_event_type {
 	G2D_EVENT_STOP,		/* not yet */
 };
 
-struct drm_exynos_g2d_userptr {
-	unsigned long userptr;
-	unsigned long size;
+/* userptr operation types. */
+enum e_drm_exynos_g2d_userptr_op_type {
+	G2D_USERPTR_REGISTER,
+	G2D_USERPTR_UNREGISTER,
+	G2D_USERPTR_CHECK_IDLE
+};
+
+/* userptr flags */
+enum e_drm_exynos_g2d_userptr_flags {
+	/* G2D engine is allowed to read from the buffer. */
+	G2D_USERPTR_FLAG_READ	= 1 << 0,
+	/* G2D engine is allowed to write to the buffer. */
+	G2D_USERPTR_FLAG_WRITE	= 1 << 1,
+	/* G2D engine is allowed to both read and write the buffer. */
+	G2D_USERPTR_FLAG_RW =
+		G2D_USERPTR_FLAG_READ | G2D_USERPTR_FLAG_WRITE
 };
 
 struct drm_exynos_g2d_set_cmdlist {
@@ -115,6 +128,21 @@ struct drm_exynos_g2d_set_cmdlist {
 
 struct drm_exynos_g2d_exec {
 	__u64					async;
+};
+
+/**
+ * A structure for issuing userptr operations.
+ *
+ * @operation: the operation type (register, unregister and check idle).
+ * @flags: access flags for buffer registration
+ * @user_addr: the address of the userspace allocated buffer.
+ * @size: the size of the buffer in bytes.
+ */
+struct drm_exynos_g2d_userptr_op {
+	__u32 operation;
+	__u32 flags;
+	__u64 user_addr;
+	__u64 size;
 };
 
 enum drm_exynos_ops_id {
@@ -292,6 +320,7 @@ struct drm_exynos_ipp_cmd_ctrl {
 #define DRM_EXYNOS_G2D_GET_VER		0x20
 #define DRM_EXYNOS_G2D_SET_CMDLIST	0x21
 #define DRM_EXYNOS_G2D_EXEC		0x22
+#define DRM_EXYNOS_G2D_USERPTR		0x25
 
 /* IPP - Image Post Processing */
 #define DRM_EXYNOS_IPP_GET_PROPERTY	0x30
@@ -314,6 +343,8 @@ struct drm_exynos_ipp_cmd_ctrl {
 		DRM_EXYNOS_G2D_SET_CMDLIST, struct drm_exynos_g2d_set_cmdlist)
 #define DRM_IOCTL_EXYNOS_G2D_EXEC		DRM_IOWR(DRM_COMMAND_BASE + \
 		DRM_EXYNOS_G2D_EXEC, struct drm_exynos_g2d_exec)
+#define DRM_IOCTL_EXYNOS_G2D_USERPTR		DRM_IOW(DRM_COMMAND_BASE + \
+		DRM_EXYNOS_G2D_USERPTR, struct drm_exynos_g2d_userptr_op)
 
 #define DRM_IOCTL_EXYNOS_IPP_GET_PROPERTY	DRM_IOWR(DRM_COMMAND_BASE + \
 		DRM_EXYNOS_IPP_GET_PROPERTY, struct drm_exynos_ipp_prop_list)
